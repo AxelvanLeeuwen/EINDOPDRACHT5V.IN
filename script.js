@@ -123,9 +123,9 @@ function setup() {
   bob.stapGrootte = 1*eve.stapGrootte;
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
 
-  gleb = new Vijand(700,400);
-  gleb.stapGrootte = 1*eve.stapGrootte;
-  gleb.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
+  cindy = new Vijand(700,400);
+  cindy.stapGrootte = 1*eve.stapGrootte;
+  cindy.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
 }
 function jeHebtVerloren() {  
   background('red')
@@ -152,7 +152,6 @@ function draw() {
       let x = i * celGrootte;
       let y = j * celGrootte;
 
-      // Dit moet BINNEN de j-loop staan, zodat 'i' en 'j' bekend zijn
       let isBuitenrand = (i === 0 || i === cols - 1 || j === 0 || j === rows - 1);
 
       if (isBuitenrand) {
@@ -161,25 +160,20 @@ function draw() {
         } else {
           fill('blue');
         }
-      } else {
-        fill(255); // Kleur voor de binnenkant (bijv. wit)
       }
-
-      // Vergeet niet het vakje hier te tekenen!
       rect(x, y, celGrootte, celGrootte);
-
-    } // <--- Hier sluit pas de j-loop
-  } // <--- Hier sluit pas de i-loop
+    }
+  }
 
 
   eve.beweeg();
   alice.beweeg();
   bob.beweeg();
-  gleb.beweeg();
+  cindy.beweeg();
   eve.toon();
   alice.toon();
   bob.toon();
-  gleb.toon();
+  cindy.toon();
 
   if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy)) {
      jeHebtVerloren(true)
