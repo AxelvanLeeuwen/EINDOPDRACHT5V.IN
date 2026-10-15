@@ -125,7 +125,7 @@ function setup() {
 
   cindy = new Vijand(700,400);
   cindy.stapGrootte = 1*eve.stapGrootte;
-  cindy.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
+  cindy.sprite = loadImage("images/sprites/Bob100px/Bob.png");
 }
 function jeHebtVerloren() {  
   background('red')
@@ -143,25 +143,21 @@ function draw() {
   background(brug);
   raster.teken();
 
-  const cols = raster.aantalKolommen;
-  const rows = raster.aantalRijen;
-  const celGrootte = raster.celGrootte;
+   for (let i = 0; i < raster.aantalKolommen; i++) {
+    for (let j = 0; j < raster.aantalRijen; j++) {
+      let x = i * raster.celGrootte;
+      let y = j * raster.celGrootte;
 
-  for (let i = 0; i < cols; i++) {
-    for (let j = 0; j < rows; j++) {
-      let x = i * celGrootte;
-      let y = j * celGrootte;
-
-      let isBuitenrand = (i === 0 || i === cols - 1 || j === 0 || j === rows - 1);
+      let isBuitenrand = (i === 0 || i === raster.aantalKolommen - 1 || j === 0 || j === raster.aantalRijen - 1);
 
       if (isBuitenrand) {
-        if (mouseX > x && mouseX < x + celGrootte && mouseY > y && mouseY < y + celGrootte) {
+        if (mouseX > x && mouseX < x + raster.celGrootte && mouseY > y && mouseY < y + raster.celGrootte) {
           fill('red');
         } else {
           fill('blue');
         }
       }
-      rect(x, y, celGrootte, celGrootte);
+      rect(x, y, raster.celGrootte, raster.celGrootte);
     }
   }
 
