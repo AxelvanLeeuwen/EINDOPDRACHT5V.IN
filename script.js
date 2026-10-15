@@ -1,5 +1,5 @@
 class Raster {
-  constructor(r,k) {
+  constructor() {
     this.aantalRijen = 12;
     this.aantalKolommen = 18;
     this.celGrootte = null;
@@ -11,11 +11,29 @@ class Raster {
 
   teken() {
     push();
-    noFill();
     stroke('grey');
-    for (var rij = 0;rij < this.aantalRijen;rij++) {
-      for (var kolom = 0;kolom < this.aantalKolommen;kolom++) {
-        rect(kolom*this.celGrootte,rij*this.celGrootte,this.celGrootte,this.celGrootte);
+
+    for (var rij = 0; rij < this.aantalRijen; rij++) {
+      for (var kolom = 0; kolom < this.aantalKolommen; kolom++) {
+        let x = kolom * this.celGrootte;
+        let y = rij * this.celGrootte;
+
+        
+        let isBuitenrand = (kolom === 0 || kolom === this.aantalKolommen - 1 || rij === 0 || rij === this.aantalRijen - 1);
+
+        if (isBuitenrand) {
+          
+          if (mouseX > x && mouseX < x + this.celGrootte && mouseY > y && mouseY < y + this.celGrootte) {
+            fill('red');
+          } else {
+            fill('blue');
+          }
+        } else {
+          noFill();
+        }
+
+     
+        rect(x, y, this.celGrootte, this.celGrootte);
       }
     }
     pop();
@@ -105,7 +123,6 @@ function setup() {
   textSize(90);
 
   raster = new Raster(6,9);
-
   raster.berekenCelGrootte();
 
   eve = new Jos();
@@ -123,59 +140,46 @@ function setup() {
   bob.stapGrootte = 1*eve.stapGrootte;
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
 
-  cindy = new Vijand(700,400);
-  cindy.stapGrootte = 1*eve.stapGrootte;
-  cindy.sprite = loadImage("images/sprites/Bob100px/Bob.png");
+  gleb = new Vijand(700,400);
+  gleb.stapGrootte = 1*eve.stapGrootte;
+  gleb.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
 }
+
 function jeHebtVerloren() {  
-  background('red')
-  fill("white")
-  text("je hebt verloren!",30,300)
+  background('red');
+  fill("white");
+  text("je hebt verloren!",30,300);
   noLoop();
 }
-function jeHebtGewonnen() 
-{background('green');
-fill('white');
-text("Je hebt gewonnen!",30,300);
-noLoop();}
+
+function jeHebtGewonnen() {
+  background('green');
+  fill('white');
+  text("Je hebt gewonnen!",30,300);
+  noLoop();
+}
 
 function draw() {
   background(brug);
+
+ 
   raster.teken();
-
-   for (let i = 0; i < raster.aantalKolommen; i++) {
-    for (let j = 0; j < raster.aantalRijen; j++) {
-      let x = i * raster.celGrootte;
-      let y = j * raster.celGrootte;
-
-      let isBuitenrand = (i === 0 || i === raster.aantalKolommen - 1 || j === 0 || j === raster.aantalRijen - 1);
-
-      if (isBuitenrand) {
-        if (mouseX > x && mouseX < x + raster.celGrootte && mouseY > y && mouseY < y + raster.celGrootte) {
-          fill('red');
-        } else {
-          fill('blue');
-        }
-      }
-      rect(x, y, raster.celGrootte, raster.celGrootte);
-    }
-  }
-
 
   eve.beweeg();
   alice.beweeg();
   bob.beweeg();
-  cindy.beweeg();
+  gleb.beweeg();
+
   eve.toon();
   alice.toon();
   bob.toon();
-  cindy.toon();
+  gleb.toon();
 
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy)) {
-     jeHebtVerloren(true)
+  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(gleb)) {
+     jeHebtVerloren();
   }
 
   if (eve.gehaald) {
-   jeHebtGewonnen(true)
-}
+     jeHebtGewonnen();
+  }
 }
