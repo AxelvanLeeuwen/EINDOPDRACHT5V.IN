@@ -122,26 +122,70 @@ function setup() {
   bob = new Vijand(600,400);
   bob.stapGrootte = 1*eve.stapGrootte;
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
+
+  gleb = new Vijand(700,400);
+  gleb.stapGrootte = 1*eve.stapGrootte;
+  gleb.sprite = loadImage("images/sprites/Bob100px/Bob.png");  
 }
+function jeHebtVerloren() {  
+  background('red')
+  fill("white")
+  text("je hebt verloren!",30,300)
+  noLoop();
+}
+function jeHebtGewonnen() 
+{background('green');
+fill('white');
+text("Je hebt gewonnen!",30,300);
+noLoop();}
 
 function draw() {
   background(brug);
   raster.teken();
+
+  const cols = raster.aantalKolommen;
+  const rows = raster.aantalRijen;
+  const celGrootte = raster.celGrootte;
+
+  for (let i = 0; i < cols; i++) {
+    for (let j = 0; j < rows; j++) {
+      let x = i * celGrootte;
+      let y = j * celGrootte;
+
+      // Dit moet BINNEN de j-loop staan, zodat 'i' en 'j' bekend zijn
+      let isBuitenrand = (i === 0 || i === cols - 1 || j === 0 || j === rows - 1);
+
+      if (isBuitenrand) {
+        if (mouseX > x && mouseX < x + celGrootte && mouseY > y && mouseY < y + celGrootte) {
+          fill('red');
+        } else {
+          fill('blue');
+        }
+      } else {
+        fill(255); // Kleur voor de binnenkant (bijv. wit)
+      }
+
+      // Vergeet niet het vakje hier te tekenen!
+      rect(x, y, celGrootte, celGrootte);
+
+    } // <--- Hier sluit pas de j-loop
+  } // <--- Hier sluit pas de i-loop
+
+
   eve.beweeg();
   alice.beweeg();
   bob.beweeg();
+  gleb.beweeg();
   eve.toon();
   alice.toon();
   bob.toon();
+  gleb.toon();
 
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob)) {
-    noLoop();
+  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy)) {
+     jeHebtVerloren(true)
   }
 
   if (eve.gehaald) {
-    background('green');
-    fill('white');
-    text("Je hebt gewonnen!",30,300);
-    noLoop();
-  }
+   jeHebtGewonnen(true)
+}
 }
