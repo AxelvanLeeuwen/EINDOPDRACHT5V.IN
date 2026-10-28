@@ -8,7 +8,7 @@ class Raster {
   berekenCelGrootte() {
     this.celGrootte = canvas.width / this.aantalKolommen;
   }
-
+  // blauwe rand 
   teken() {
     push();
     stroke('grey');
@@ -44,17 +44,23 @@ class Jos {
   }
 
   beweeg() {
-    if (keyIsDown(65)) { this.x -= this.stapGrootte; this.frameNummer = 2; }
-    if (keyIsDown(68)) { this.x += this.stapGrootte; this.frameNummer = 1; }
-    if (keyIsDown(87)) { this.y -= this.stapGrootte; this.frameNummer = 4; }
-    if (keyIsDown(83)) { this.y += this.stapGrootte; this.frameNummer = 5; }
+      if (keyIsDown(65)) { this.x -= this.stapGrootte; this.frameNummer = 2; }
+      if (keyIsDown(68)) { this.x += this.stapGrootte; this.frameNummer = 1; }
+      if (keyIsDown(87)) { this.y -= this.stapGrootte; this.frameNummer = 4; }
+      if (keyIsDown(83)) { this.y += this.stapGrootte; this.frameNummer = 5; }
 
-    this.x = constrain(this.x, 0, canvas.width - raster.celGrootte);
-    this.y = constrain(this.y, 0, canvas.height - raster.celGrootte);
+      // speler blijft binnen de blauwe randen
+      this.x = constrain(this.x, raster.celGrootte, canvas.width - 2 * raster.celGrootte);
 
-    if (this.x >= canvas.width - raster.celGrootte) {
-      this.gehaald = true;
-    }
+      // extra toevoeging: van onder naar boven "teleporteren"
+      if (this.y >= canvas.height - raster.celGrootte) {
+          this.y = raster.celGrootte;
+      }
+      this.y = constrain(this.y, raster.celGrootte, canvas.height - 2 * raster.celGrootte);
+
+      if (this.x >= canvas.width - 2 * raster.celGrootte) {
+          this.gehaald = true;
+      }
   }
 
   wordtGeraakt(vijand) {
@@ -89,7 +95,7 @@ class Vijand {
     image(this.sprite, this.x, this.y, raster.celGrootte, raster.celGrootte);
   }
 }
-
+// raket 
 class Raket {
   constructor(x, zwaartekracht) {
     this.x = x;
@@ -100,7 +106,7 @@ class Raket {
     this.y = this.bodem;
 
     let hoogte = this.bodem - this.plafond;
-    this.startSnelheid = sqrt(2 * this.zwaartekracht * hoogte);      //Opgezocht met ChatGPT
+    this.startSnelheid = sqrt(2 * this.zwaartekracht * hoogte);      //m.b.v. ChatGPT
     this.snelheidY = -this.startSnelheid;
   }
 
@@ -122,7 +128,7 @@ class Raket {
     image(this.sprite, this.x, this.y, raster.celGrootte, raster.celGrootte);
   }
 }
-
+//pingpongbal
 class Bal {
   constructor() {
     this.x = 400;
@@ -145,7 +151,7 @@ class Bal {
     ellipse(this.x, this.y, this.grootte);
   }
 }
-
+// piramide op de achtergrond
 function piramide(x, y, b) {
   if (b < 10) return;
   fill(255, 215, 0, 80);
@@ -160,7 +166,7 @@ function eindscherm(tekst, kleur) {
   text(tekst, 30, 300);
   noLoop();
 }
-
+// verliesscherm en eindschermfuncties
 function jeHebtVerloren() { eindscherm("Je hebt verloren!", 'red'); }
 function jeHebtGewonnen() { eindscherm("Je hebt gewonnen!", 'green'); }
 
@@ -194,11 +200,11 @@ function setup() {
   bob = new Vijand(600, 400);
   bob.stapGrootte = eve.stapGrootte;
   bob.sprite = loadImage("images/sprites/Bob100px/Bob.png");
-
+  // extra vijand Gleb (bom)
   gleb = new Vijand(700, 400);
   gleb.stapGrootte = eve.stapGrootte;
-  gleb.sprite = loadImage("images/sprites/Bob100px/Bob.png");
-
+  gleb.sprite = loadImage("images/sprites/bom.png");
+  // extra vijand cindy
   cindy = new Vijand(500, 300);
   cindy.stapGrootte = eve.stapGrootte;
   cindy.sprite = loadImage("images/sprites/Alice100px/Alice.png");
@@ -236,26 +242,31 @@ function draw() {
   for (var r of raketten) r.toon();
   bal.toon();
 
-  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(gleb) || eve.wordtGeraakt(cindy)) {
+  if (eve.wordtGeraakt(alice) || eve.wordtGeraakt(bob) || eve.wordtGeraakt(cindy)) {
     levens--;
     eve.x = 0;
   }
 
+  //extra vijand Gleb (bom: geraakt=verloren)
+  if (eve.wordtGeraakt(gleb)) {
+    jeHebtVerloren();
+  }
+  
   for (var r of raketten) {
     if (eve.x < r.x + raster.celGrootte && eve.x + raster.celGrootte > r.x &&
-        eve.y < r.y + raster.celGrootte && eve.y + raster.celGrootte > r.y) {
+      eve.y < r.y + raster.celGrootte && eve.y + raster.celGrootte > r.y) {
       levens--;
       eve.x = 0;
     }
   }
 
   if (eve.x < bal.x + bal.grootte && eve.x + raster.celGrootte > bal.x &&
-      eve.y < bal.y + bal.grootte && eve.y + raster.celGrootte > bal.y) {
+    eve.y < bal.y + bal.grootte && eve.y + raster.celGrootte > bal.y) {
     levens++;
     bal.x = random(100, 800);
     bal.y = random(100, 500);
   }
-
+  //levens
   fill('white');
   textSize(20);
   text("Levens: " + levens, 10, 30);
